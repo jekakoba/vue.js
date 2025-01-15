@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Урок 1, Задача 1</title>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+	<div id="app">
+		<label>
+			Кількість пасажирів
+			<input type="number" v-model.number="passengers">
+		</label>
+		<hr>
+		<label>
+			<label>
+				Кількість автобусів (кожен автобус на 20 місць)
+				<input type="number" v-model.number="busesNumbers">
+			</label>
+			<hr>
+			<label>
+				Кількість води (кожному пасажиру 2 пляшки)
+				<input type="number" v-model.number="bottlesNumbers">
+			</label>
+			<hr>
+			<label>
+				Кількість бутербродів (кожному пасажиру 3 бутерброди)
+				<input type="number" v-model.number="sandwichesNumbers">
+			</label>
+	</div>
+	<script>
+		// Вводиться кількість пасажирів. 
+		// Вивести:
+		// скільки потрібно автобусів (кожен автобус на 20 місць)
+		// скільки пляшок води (кожному пасажиру 2 пляшки)
+		// скільки бутербродів (кожному пасажиру 3 бутерброди)
+		const { createApp } = Vue
+		const countPassengersInBus = 20
+		const countBottlesForPerson = 2
+		const countSandwichesForPerson = 3
+		const app = createApp({
+			data() {
+				return {
+					passengers: 0,
+					buses: 0,
+					bottles: 0,
+					sandwiches: 0
+				}
+			},
+			computed: {
+				busesNumbers: {
+					get() {
+						return Math.ceil(this.passengers / countPassengersInBus)
+					},
+					set(busNumValue) {
+						this.passengers = countPassengersInBus * busNumValue
+					}
+				},
+				bottlesNumbers: {
+					get() {
+						return Math.ceil(this.passengers * countBottlesForPerson)
+					},
+					set(bottlesNumValue) {
+						this.passengers = countBottlesForPerson * bottlesNumValue
+					}
+				},
+				sandwichesNumbers: {
+					get() {
+						return Math.ceil(this.passengers * countSandwichesForPerson)
+					},
+					set(sandwichesNumValue) {
+						this.passengers = countSandwichesForPerson * sandwichesNumValue
+					}
+				}
+			},
+		})
+		app.mount('#app')
+	</script>
+</body>
+
+</html>

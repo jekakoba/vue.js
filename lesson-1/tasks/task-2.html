@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Урок 1, Задача 2</title>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+	<div id="app">
+		<label>
+			Введіть номер місяця (від 1 до 12)
+			<br>
+			<input min="1" max="12" type="number" v-model="currentMonth">
+		</label>
+		<button type="button" @click="renderSeason()">Результат</button>
+		<div>
+			<p>Рекомендоаний одяг — {{seasonDate.clothing}} </p>
+			<img :src="seasonDate.image" style="object-fit: cover;" width="300" height="300" alt="image">
+		</div>
+	</div>
+	<script>
+		// Вводиться номер місяця. Автоматично виводити рекомендований одяг (зима – пальто, літо – шорти ….). Також автоматично виводити зображення з відповідним зображенням лісу (зима – ліс зі снігом, осінь – жовтий ліс, …).
+		const { createApp } = Vue
+		const app = createApp({
+			data() {
+				return {
+					currentMonth: null,
+					message: null,
+					seasonDate: {
+						clothing: '',
+						image: ''
+					},
+					seasons: [
+						{
+							name: "winter",
+							clothing: "пальто",
+							image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRozTK3l4d1F2i-jdZ1W-YLqaBUcLBRd1hqrg&s",
+						},
+						{
+							name: "spring",
+							clothing: "джинсова куртка",
+							image: "https://st.depositphotos.com/1007322/2648/i/450/depositphotos_26480829-stock-photo-path-through-bluebell-woods.jpg",
+						},
+						{
+							name: "summer",
+							clothing: "шорти",
+							image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDnSmtgnqM7v8rHv7NxqA8UZefsPbdwZO7vQ&s",
+						},
+						{
+							name: "autumn",
+							clothing: "шкіряна куртка",
+							image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfoZbQUyiDvVe_o-tTEGLFJh0TYsa6_hNwSw&s",
+						}
+					]
+				}
+			},
+			methods: {
+				getNameSeason() {
+					if (this.currentMonth < 1 || this.currentMonth > 12) {
+						return alert('Incorrect value');
+					}
+					switch (this.currentMonth) {
+						case 12:
+						case 1:
+						case 2:
+							return "winter"
+							break;
+
+						case 3:
+						case 4:
+						case 5:
+							return "spring"
+							break;
+
+						case 6:
+						case 7:
+						case 8:
+							return "summer"
+							break;
+
+						case 9:
+						case 10:
+						case 11:
+							return "autumn"
+							break;
+					}
+				},
+				renderSeason() {
+					const seasonName = this.getNameSeason()
+					this.seasonDate = this.seasons.find(season => season.name === seasonName)
+				}
+			}
+		})
+		app.mount('#app')
+	</script>
+</body>
+
+</html>

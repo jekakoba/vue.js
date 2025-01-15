@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Урок 1, Задача 4</title>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<style>
+		.red {
+			color: red;
+		}
+
+		.green {
+			color: green;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<div :class="colorBalance">Сума на рахунку: <span>{{currentAmount}}</span>грн</div>
+		<br>
+		<label>
+			Зарахувати на рахунок:
+			<input type="number" v-model.number="depositAmount">
+			<button type="button" @click="addToAmount()">Зарахувати</button>
+		</label>
+		<br>
+		<br>
+		<label>
+			Зняти з рахунку:
+			<input type="number" v-model.number="withdrawalAmount">
+			<button type="button" @click="withdrawFromAmount()">Зняти</button>
+		</label>
+		<br>
+		<br>
+		<div>Відсотки за обслуговування: <span>{{taxInfo}}</span>грн</div>
+		<hr>
+		<br>
+		<div>Сума у доларах: $<span>{{dolarAmount}}</span></div>
+		<div>Сума у євро: Є<span>{{euroAmount}}</span></div>
+	</div>
+	<script>
+		// 	Задача 4. “Рахунок у банку”
+		// Вимоги:
+		// 1) Спочатку сума дорівнює 0грн. Змінити суму у гривнях можна або зарахуванням на рахунок, або зняттям.
+		// 2) Сума автоматично переводиться у долари та євро (фіксований курс задається у data).
+		// 3) можливість зарахувати суму (контролювати, щоб не була від’ємною)
+		// 4) можливість зняти (щоб не можна зняти більше ніж є на рахунку)
+		// 5) при виконанні зняття і зарахування коштів вираховувати 3% від суми (відображати кількість відсотків автоматично)
+		// При зміні суми :
+		// - якщо було зняття, то суму відоражати червоним
+		// - якщо було зарахування, то суму відображати зеленим
+		// Якщо сума валюти менша за 100 то відображати червоним кольором, інакше - зеленим
+		const { createApp } = Vue
+		const TAX = 3
+		const app = createApp({
+			data() {
+				return {
+					currentAmount: 0,
+					depositAmount: null,
+					withdrawalAmount: null,
+					dolarRate: 42.32,
+					euroRate: 43.35,
+					dolarConvert: null,
+					euroRateConvert: null,
+					taxInfo: 0,
+					color: null
+				}
+			},
+			methods: {
+				addToAmount() {
+					if (this.depositAmount > 0) {
+						this.currentAmount = parseFloat((this.currentAmount + this.depositAmount).toFixed(2));
+						let tax = parseFloat((this.currentAmount / 100) * TAX).toFixed(2);
+						this.taxInfo = tax;
+						this.color = 'green'
+					} else {
+						alert(`не можна додавати нічого та від'ємне значення`)
+					}
+				},
+				withdrawFromAmount() {
+					if (this.withdrawalAmount > 0 && this.withdrawalAmount <= this.currentAmount) {
+						this.currentAmount = parseFloat((this.currentAmount - this.withdrawalAmount).toFixed(2));
+						let tax = parseFloat((this.currentAmount / 100) * TAX).toFixed(2);
+						this.taxInfo = tax;
+						this.color = 'red'
+					} else {
+						alert('не можна зняти більше кешу, ніж є на рахунку')
+					}
+				},
+			},
+			computed: {
+				dolarAmount() {
+					return (this.currentAmount / this.dolarRate).toFixed(2)
+				},
+				euroAmount() {
+					return (this.currentAmount / this.euroRate).toFixed(2)
+				},
+				colorBalance() {
+					return this.currentAmount >= 100 ? 'green' : 'red';
+				}
+			},
+		})
+		app.mount('#app')
+	</script>
+</body>
+
+</html>

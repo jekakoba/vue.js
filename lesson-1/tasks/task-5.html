@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Урок 1, Задача 5</title>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+	<div id="app">
+		<label>
+			Loign
+			<input type="text" v-model="userLogin">
+		</label>
+		<hr>
+		<label>
+			Password
+			<input type="password" v-model="userPassword">
+		</label>
+		<hr>
+		<button @click="authenticateUser()">Go</button>
+		<p>Login — jekakoba</p>
+		<p>Password — qwerty12</p>
+	</div>
+	<script>
+		// Задача 5. Додаток містить масив об’єктів (логін, пароль) --  інсуючі логіни і паролі. Користувач вводить логін і пароль, а програма повідомляє чи може користувач бути авторизованим (чи є він одним з масиву).
+		const { createApp } = Vue
+		const userData = [
+			{
+				login: 'bold',
+				password: 1631415,
+			},
+			{
+				login: 'asdas',
+				password: 'valopi',
+			},
+			{
+				login: 'jekakoba',
+				password: 'qwerty12',
+			},
+			{
+				login: 'sun',
+				password: 'useradmin12',
+			},
+			{
+				login: 'dog',
+				password: 'cat',
+			}
+		]
+		const app = createApp({
+			data() {
+				return {
+					userLogin: null,
+					userPassword: null,
+				}
+			},
+			methods: {
+				authenticateUser() {
+					if (this.userLogin && this.userPassword) {
+						let result = userData.some(item => item.login === this.userLogin && item.password === this.userPassword)
+						result ? alert('Ви авторизовані') : alert('Неправильний логін чи пароль')
+					} else {
+						alert('Введіть логін та пароль')
+					}
+				}
+			},
+		})
+		app.mount('#app')
+	</script>
+</body>
+
+</html>
