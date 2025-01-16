@@ -23,12 +23,12 @@
 			<hr>
 			<label>
 				Кількість води (кожному пасажиру 2 пляшки)
-				<input type="number" v-model.number="bottlesNumbers">
+				<input type="number" v-model.number.lazy="bottlesNumbers">
 			</label>
 			<hr>
 			<label>
 				Кількість бутербродів (кожному пасажиру 3 бутерброди)
-				<input type="number" v-model.number="sandwichesNumbers">
+				<input type="number" v-model.number.lazy="sandwichesNumbers">
 			</label>
 	</div>
 	<script>
