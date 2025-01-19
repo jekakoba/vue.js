@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Урок 2, Задача 2</title>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<style>
+		html {
+			box-sizing: border-box;
+		}
+
+		*,
+		::after,
+		::before {
+			box-sizing: inherit;
+		}
+
+		body {
+			font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+			min-height: 100svh;
+			margin: 0;
+		}
+
+		h1,
+		h2 {
+			margin: 0;
+			padding: 20px 0 5px 0;
+		}
+
+		#app {
+			display: flex;
+			align-items: center;
+			min-height: 100svh;
+			align-content: center;
+			padding: 20px;
+		}
+
+		.box {
+			max-width: 400px;
+			width: 100%;
+			margin: 0 auto;
+		}
+
+		select {
+			width: 100%;
+			height: 30px;
+		}
+
+		select,
+		h2 {
+			position: relative;
+			z-index: 10;
+		}
+
+		h2 {
+			color: white;
+			text-shadow: 3px 3px black;
+		}
+
+		.result {
+			min-height: 300px;
+		}
+
+		.business-block,
+		.economs-block {
+			position: relative;
+			min-height: 300px;
+		}
+
+		.img {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			object-fit: cover;
+			filter: brightness(50%);
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<div class="box">
+			<h1>Оберіть клас квитка</h1>
+			<select v-model="selectedClass">
+				<option value="business">Бізнес</option>
+				<option value="econom">Економ</option>
+			</select>
+			<div class="result" v-show="selectedClass">
+				<div class="business-block" v-if="isBusineesClass">
+					<h2>Елементи вибору (бізнес клас):</h2>
+					<select v-model="selectedBusinessItem">
+						<option value="newspaper">Газета</option>
+						<option value="cognac">Коньяк</option>
+					</select>
+					<template v-if="isCognac">
+						<h2>Бажаєте закусити?</h2>
+						<select v-model="isSnack">
+							<option value="yes">Так</option>
+							<option value="no">Ні</option>
+						</select>
+					</template>
+					<img class="img" src="http://surl.li/huxbmz" alt="cabin">
+				</div>
+				<div class="economs-block" v-if="isEconomClass">
+					<h2>Елементи вибору (економ клас):</h2>
+					<select>
+						<option value="" disabled selected>Оберіть елемент:</option>
+						<option value="newspaper">Пиво</option>
+						<option value="cognac">Чіпси</option>
+					</select>
+					<img class="img" src="https://azbyka.ru/wp-content/uploads/2016/07/priroda.jpg" alt="clouds">
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		// 	Задача 2. З випадаючого списку вибираємо клас квитка у літаку. Якщо 
+		// 1) бізнес -  виводимо елементи для вибору газети та коньяку (якщо вибрано коньяк, то запропонувати закуску (так/ні)), на фоні зображення бізнес кают 
+		// 2) економ – виводимо елементи для вибору типу пива і чипсів, на фоні хмарки.
+		const { createApp } = Vue
+		const app = createApp({
+			data() {
+				return {
+					selectedClass: null,
+					selectedBusinessItem: null,
+					isSnack: null,
+				}
+			},
+			computed: {
+				isBusineesClass() {
+					return this.selectedClass === 'business'
+				},
+				isEconomClass() {
+					return this.selectedClass === 'econom'
+				},
+				isCognac() {
+					return this.selectedBusinessItem === 'cognac'
+				}
+			},
+		})
+		app.mount('#app')
+	</script>
+</body>
+
+</html>

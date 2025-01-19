@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Урок 2, Задача 6</title>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<style>
+	body {
+		font-family: Arial, sans-serif;
+	}
+
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		text-align: left;
+
+	}
+
+	thead {
+		text-align: center;
+	}
+
+	tbody {
+		vertical-align: top;
+	}
+
+	tbody tr td {
+		width: 30%;
+	}
+
+	tbody tr td div {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+		padding: 10px;
+		border: 1px solid black;
+	}
+
+	th,
+	td {
+		border: 1px solid black;
+		padding: 10px;
+	}
+
+	th {
+		background-color: #f4f4f4;
+	}
+
+	.btn {
+		display: inline-block;
+		padding: 5px 10px;
+		border: 1px solid black;
+		background-color: white;
+		text-decoration: none;
+		font-size: 14px;
+		cursor: pointer;
+	}
+
+	.btn:hover {
+		background-color: #e0e0e0;
+	}
+</style>
+
+<body style="padding: 20px;">
+	<div id="app">
+		<div style="margin-bottom: 50px;">
+			<label>
+				Нова замовлена страва:
+				<input type="text" v-model.trim="userDish">
+			</label>
+			<button type="button" @click="createDish" :disabled="!isDataCompleted">Додати</button>
+		</div>
+		<table>
+			<thead>
+				<tr>
+					<th>Очікують на виконання</th>
+					<th>Виконуються</th>
+					<th>Готові до виносу</th>
+				</tr>
+			</thead>
+			<tbody>
+				<template v-if="!isProductsListEmpty">
+					<tr>
+						<td>
+							<div v-for="waitingDish in waitingList" :key="waitingDish.id">
+								<span>{{waitingDish.dish}}</span>
+								<button class="btn" type="button" @click="addDishInprocessingList(waitingDish.id)">Готувати</button>
+							</div>
+						</td>
+						<td>
+							<div v-for="processingDish in processingList" :key="processingDish.id">
+								<span>{{processingDish.dish}}</span>
+								<button class="btn" type="button" @click="addDishInCompletedList(processingDish.id)">Приготовлено</button>
+							</div>
+						</td>
+						<td>
+							<div v-for="completedDish in completedList" :key="completedDish.id">
+								<span>{{completedDish.dish}}</span>
+								<button class="btn" type="button" @click="serveDish(completedDish.id)">Приготовлено</button>
+							</div>
+						</td>
+					</tr>
+				</template>
+				<tr v-else>
+					<td colspan="3" style="text-align:center;">Продукти не додані</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<script>
+		// На кухню поступають замовлення. Спочатку ми додаємо їх у список “Очікують на виконання”, якщо повар береться робити — замовлення переходить у список “Виконуються”, якщо замовлення виконано — переходить у список “Готові до виносу”.Якщо натиснути на “Подано” - страва зникає з таблиці
+		const { createApp } = Vue
+		const vueResources = [
+			{
+				id: 1,
+				logo: "http://surl.li/tfizws",
+				titleLink: "Vue.js",
+				link: "https://vuejs.org/",
+				titleSection: "Tutorial",
+				description: "Welcome to the Vue tutorial! The goal of this tutorial is to quickly give you an experience of what it feels like to work with Vue, right in the browser."
+			},
+			{
+				id: 2,
+				logo: "http://surl.li/desqrk",
+				titleLink: "MDN Web Docs",
+				link: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Frameworks_libraries/Vue_getting_started",
+				titleSection: "Getting started with Vue - Learn web development | MDN",
+				description: "Dec 19, 2024 — In this article we'll look at a little bit of Vue background, learn how to install it and create a new project, study the high-level structure "
+			},
+			{
+				id: 3,
+				logo: "http://surl.li/bgaizb",
+				titleLink: "W3Schools",
+				link: "https://www.w3schools.com/vue/",
+				titleSection: "Vue Tutorial",
+				description: "First, you will learn the basics of Vue: text interpolation, directives, and how to incorporate events and forms into your project. Then you will"
+			}
+		]
+		const app = createApp({
+			data() {
+				return {
+					userDish: null,
+					waitingList: [],
+					processingList: [],
+					completedList: []
+				}
+			},
+			methods: {
+				createDish() {
+					this.waitingList.push({
+						id: new Date().getTime(),
+						dish: this.userDish
+					})
+					this.clear()
+				},
+				addDish(fromList, toList, dishId) {
+					const index = fromList.findIndex(dish => dish.id === dishId)
+					const [dish] = fromList.splice(index, 1)
+					toList.push(dish)
+				},
+				addDishInprocessingList(dishId) {
+					this.addDish(this.waitingList, this.processingList, dishId)
+				},
+				addDishInCompletedList(dishId) {
+					this.addDish(this.processingList, this.completedList, dishId)
+				},
+				serveDish(dishId) {
+					const index = this.completedList.findIndex(dish => dish.id === dishId);
+					this.completedList.splice(index, 1);
+				},
+				removeDish(dishId) {
+					this.addDish(this.completedList, this.processingList, dishId)
+					const index = this.completedList.findIndex(dish => dish.id === dishId)
+					const [dish] = this.completedList.splice(index, 1);
+				},
+				clear() {
+					this.userDish = null
+				}
+			},
+			computed: {
+				isDataCompleted() {
+					return this.userDish && this.userDish
+				},
+				isProductsListEmpty() {
+					return this.waitingList.length === 0 &&
+						this.processingList.length === 0 &&
+						this.completedList.length === 0;
+				},
+			},
+		})
+		app.mount('#app')
+	</script>
+</body>
+
+</html>

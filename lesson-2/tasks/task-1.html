@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Урок 2, Задача 1</title>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+	<div id="app">
+		<label>
+			Login
+			<input type="text" v-model="userLogin">
+		</label>
+		<hr>
+		<label>
+			Password
+			<input type="password" v-model="userPassword">
+		</label>
+		<br>
+		<br>
+		<button type="button" @click="getLoginUser">Go</button>
+		<template v-if="isInputsLength">
+			<div v-if="searchingUser === 'sun'">:)</div>
+			<div style="color:blue" v-else-if="searchingUser === 'іван'">Це Іван</div>
+			<div style="color:red" v-else>Користувача не знайдено</div>
+		</template>
+		<hr>
+		<div>Login — <b>sun</b></div>
+	</div>
+	<script>
+		// Задача 1. Вводимо логіна і пароль. Якщо логін вірний відображаємо смайл. Якщо ні, то:
+		// 1) якщо логін = Іван – колір повідомлення про помилку синій
+		// 2) якщо хтось інший, то колір повідомлення червоний
+		const { createApp } = Vue
+		const userData = [
+			{
+				id: 2,
+				login: 'jekakoba',
+				password: 'qwerty12',
+			},
+			{
+				id: 1,
+				login: 'sun',
+				password: 12345,
+			},
+			{
+				id: 3,
+				login: 'tarantula12',
+				password: 'qbgftewac',
+			},
+			{
+				id: 4,
+				login: 'Іван',
+				password: 'january',
+			}
+		]
+		const app = createApp({
+			data() {
+				return {
+					userLogin: null,
+					userPassword: null,
+					searchingUser: null,
+					isInputsLength: false
+				}
+			},
+			methods: {
+				getLoginUser() {
+					let user
+					if (this.isEmptyFileds) {
+						user = this.userDataList.filter(user => user.login.toLowerCase() === this.userLogin.toLowerCase());
+						this.searchingUser = user[0]?.login.toLowerCase()
+						this.isInputsLength = true
+					}
+					else {
+						alert('Заповніть всі поля')
+						this.isInputsLength = false
+					}
+				},
+			},
+			computed: {
+				userDataList() {
+					return userData
+				},
+				isEmptyFileds() {
+					return this.userLogin && this.userPassword
+				},
+			},
+		})
+		app.mount('#app')
+	</script>
+</body>
+
+</html>

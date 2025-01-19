@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Урок 2, Задача 3</title>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<style>
+		html {
+			box-sizing: border-box;
+		}
+
+		*,
+		::after,
+		::before {
+			box-sizing: inherit;
+		}
+
+		body {
+
+			font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+			min-height: 100svh;
+			margin: 0;
+		}
+
+		#app {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 100svh;
+			align-content: center;
+			padding: 20px;
+		}
+
+		.is-right {
+			border: 3px solid green;
+		}
+
+		.is-wrong {
+			border: 3px solid red;
+		}
+
+		/* ================================= */
+
+		.box {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			padding: 20px;
+		}
+
+		.box__image {
+			width: 100%;
+			padding-bottom: 100%;
+			position: relative;
+			margin-bottom: 5px;
+		}
+
+		.box__image img {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			object-fit: cover;
+		}
+
+		.box__word {
+			margin-bottom: 10px;
+		}
+
+		.box__body {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.result {
+			margin-top: 15px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<div class="box" :class="statusColor">
+			<div class="box__image">
+				<img :src="image" alt="engWord">
+			</div>
+			<div class="box__word"><b>{{engWord}}</b></div>
+			<div class="box__body">
+				<label>
+					<span> Ваш переклад </span> <br>
+					<input type="text" v-model.trim="userWord">
+				</label>
+				<button type="button" @click="checkTranslation">Перевірити</button>
+			</div>
+			<div class="result">{{message}}</div>
+		</div>
+	</div>
+	<script>
+		// Задача 3. Елемент тренажера англійської. Виводимо зображення елемента і слово. Користувач вводить відповідь. Якщо вірно – відтворюємо фразу «Добре. Молодець!» (і додаємо зелену рамку до елемента), якщо ні - то відтворюємо фразу «Невірно, спробуйте ще раз» (і додаємо червону рамку).
+		const { createApp } = Vue
+		const dataList = [
+			{
+				id: 1,
+				engWord: 'table',
+				ukWord: 'стіл',
+				image: 'http://surl.li/fmsciv',
+			},
+			{
+				id: 2,
+				engWord: 'window',
+				ukWord: 'вікно',
+				image: 'http://surl.li/vzkksp',
+			},
+
+			{
+				id: 3,
+				engWord: 'dog',
+				ukWord: 'собака',
+				image: 'http://surl.li/pslhni',
+			}
+		]
+		const app = createApp({
+			data() {
+				return {
+					userWord: null,
+					index: this.getRandomIndex(),
+					message: null,
+					statusColor: null
+				}
+			},
+			methods: {
+				getRandomIndex() {
+					return Math.floor(Math.random() * (dataList.length))
+				},
+				isCorrectWords() {
+					return this.userWord === this.ukWord
+				},
+				checkTranslation() {
+					if (this.userWord && this.userWord) {
+						if (this.isCorrectWords()) {
+							this.message = 'Добре. Молодець!'
+							this.statusColor = 'is-right'
+						}
+						else {
+							this.message = 'Невірно, спробуйте ще раз'
+							this.statusColor = 'is-wrong'
+						}
+					} else {
+						alert('Введіть слово')
+					}
+				}
+			},
+			computed: {
+				image() {
+					return dataList[this.index].image
+				},
+				engWord() {
+					return dataList[this.index].engWord
+				},
+				ukWord() {
+					return dataList[this.index].ukWord
+				}
+			},
+		})
+		app.mount('#app')
+	</script>
+</body>
+
+</html>
