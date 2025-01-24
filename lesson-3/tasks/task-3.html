@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 3, Задача 3</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+      .low {
+        background-color: orange;
+      }
+      .middle {
+        background-color: green;
+      }
+      .high {
+        background-color: red;
+      }
+      .warning {
+        font-size: 20px;
+        font-weight: 700;
+        color: red;
+        text-transform: uppercase;
+        animation: animText 3s infinite linear;
+        display: inline-block;
+        margin-right: auto;
+      }
+      @keyframes animText {
+        0% {
+          transform: scale(0.5);
+        }
+        50% {
+          transform: scale(1.03);
+        }
+        100% {
+          transform: scale(0.5);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+      <label>
+        Введіть дозволену швидкість авто
+        <input type="number" v-model.lazy.number="speedLimit" />
+      </label>
+      <hr />
+      <label>
+        Введіть поточну швидкість авто
+        <input
+          :class="statusSpeed"
+          type="number"
+          :disabled="!isValidField"
+          v-model.lazy.number="speed"
+        />
+      </label>
+      <div v-if="warning" class="warning">Увага!!</div>
+    </div>
+    <script>
+      //    Вводиться дозволена швидкість і поточна швидкість авто. Якщо не введено дозволену швидкість, то елемент введення поточної швидкості заблокований. Якщо швидкість менше 50% дозволеної, то колір input – оранжевий, якщо від 50% до 100% - зелений, вище 100% - червоний. Якщо значення вище 90% починає блимати повідомлення «Увага!»
+      const { createApp } = Vue;
+      const app = createApp({
+        data() {
+          return {
+            speedLimit: null,
+            speed: null,
+          };
+        },
+        computed: {
+          isValidField() {
+            return this.speedLimit && this.speedLimit > 0;
+          },
+          getPercSpeed() {
+            return (this.speed / this.speedLimit) * 100;
+          },
+          statusSpeed() {
+            let color;
+            if (this.speedLimit && this.speed) {
+              switch (true) {
+                case this.getPercSpeed < 50:
+                  color = "low";
+                  break;
+                case this.getPercSpeed >= 50 && this.getPercSpeed <= 100:
+                  color = "middle";
+                  break;
+                case this.getPercSpeed > 90:
+                  color = "high";
+                  break;
+              }
+            }
+            return color;
+          },
+          warning() {
+            return this.getPercSpeed > 90;
+          },
+        },
+      });
+      app.mount("#app");
+    </script>
+  </body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 2, Задача 6</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
+  <style>
+    h2 {
+      margin: 0;
+    }
+    .container {
+      display: grid;
+      gap: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .wrapp {
+      display: grid;
+      gap: 20px;
+    }
+
+    .wrapp > * {
+      display: grid;
+      gap: 20px;
+    }
+
+    .box {
+      margin: 0;
+      display: grid;
+      align-content: start;
+      gap: 10px;
+      border: 1px solid black;
+      padding: 5px;
+      min-height: 180px;
+    }
+
+    .box li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      outline: 1px solid black;
+      cursor: pointer;
+    }
+    .box_selected li {
+      cursor: auto;
+    }
+
+    .select-item {
+      outline: 3px solid blue !important;
+    }
+
+    .box li button {
+      cursor: pointer;
+    }
+    .add {
+      padding: 5px 40px;
+      cursor: pointer;
+    }
+    .disabled {
+      pointer-events: none;
+      opacity: 0.5;
+      user-select: none;
+    }
+
+    @media (min-width: 767.98px) {
+      .add {
+        grid-column: span 2;
+        margin: 0 auto;
+      }
+      .wrapp:nth-child(2) {
+        width: 50%;
+      }
+    }
+  </style>
+
+  <body>
+    <div id="app">
+      <div class="container">
+        <div class="wrapp">
+          <div>
+            <h2>Хлопці</h2>
+            <ul class="box">
+              <li
+                v-for="(boy, index) in boysList"
+                :key="boy.id"
+                :class="{'select-item': boy.isSelected}"
+                @click="selectItem(index, boysList)"
+              >
+                {{boy.name}}
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h2>Дівчата</h2>
+            <ul class="box">
+              <li
+                v-for="(girl, index) in girlsList"
+                :key="girl.id"
+                :class="{'select-item': girl.isSelected}"
+                @click="selectItem(index, girlsList)"
+              >
+                {{girl.name}}
+              </li>
+            </ul>
+          </div>
+          <button
+            class="add"
+            :class="{'disabled':!isPair}"
+            type="button"
+            @click="createPair"
+          >
+            Додати
+          </button>
+        </div>
+        <div class="wrapp">
+          <h2>Обрані пари</h2>
+          <ul v-if="pair.length > 0" class="box box_selected">
+            <li v-for="(item,index) in pair" :key="index">
+              <span>
+                <span>{{item.boy}}</span> — <span>{{item.girl}}</span></span
+              >
+              <button type="button" @click="removePair(index)">Видалити</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Пари для танців. Поступово вибираємо хлопця, дівчину і додаємо у обрані пари. Пару можна видалити. Поки не вибрано хлопця і дівчину кнопка «Додати» заблокована.  Якщо не вистачає хлопців або дівчат вибір також блокується.
+      const { createApp } = Vue;
+      const app = createApp({
+        data() {
+          return {
+            boysList: [
+              {
+                id: 1,
+                name: "Іван",
+                isSelected: false,
+              },
+              {
+                id: 2,
+                name: "Петро",
+                isSelected: false,
+              },
+              {
+                id: 3,
+                name: "Степан",
+                isSelected: false,
+              },
+              {
+                id: 4,
+                name: "Олег",
+                isSelected: false,
+              },
+            ],
+            girlsList: [
+              {
+                id: 1,
+                name: "Оксана",
+                isSelected: false,
+              },
+              {
+                id: 2,
+                name: "Наталія",
+                isSelected: false,
+              },
+              {
+                id: 3,
+                name: "Тетяна",
+                isSelected: false,
+              },
+              {
+                id: 4,
+                name: "Ольга",
+                isSelected: false,
+              },
+            ],
+            pair: [],
+          };
+        },
+        methods: {
+          selectItem(index, fromList) {
+            fromList.forEach((item) => {
+              item.isSelected = false;
+            });
+            fromList[index].isSelected = true;
+          },
+          createPair() {
+            if (this.isPair) {
+              this.pair.push({
+                boy: this.selectedBoy.name,
+                girl: this.selectedGirl.name,
+              });
+              this.boysList = this.boysList.filter((boy) => !boy.isSelected);
+              this.girlsList = this.girlsList.filter(
+                (girl) => !girl.isSelected
+              );
+            }
+          },
+          removePair(index) {
+            const pair = this.pair[index];
+            this.boysList.push({
+              name: pair.boy,
+              isSelected: false,
+            });
+            this.girlsList.push({
+              name: pair.girl,
+              isSelected: false,
+            });
+            this.pair.splice(index, 1);
+          },
+        },
+        computed: {
+          selectedBoy() {
+            return this.boysList.find((boy) => boy.isSelected);
+          },
+          selectedGirl() {
+            return this.girlsList.find((girl) => girl.isSelected);
+          },
+          isPair() {
+            let num = this.boysList.length + this.girlsList.length;
+            return this.selectedBoy && this.selectedGirl && num % 2 === 0;
+          },
+        },
+      });
+      app.mount("#app");
+    </script>
+  </body>
+</html>

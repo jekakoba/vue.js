@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 2, Задача 13</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
+
+  <style>
+    .block div:first-child {
+      margin-bottom: 10px;
+    }
+
+    .block button {
+      cursor: pointer;
+    }
+    .buttons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .results {
+      display: flex;
+      gap: 20px;
+    }
+    .results ul {
+      display: grid;
+      gap: 10px;
+    }
+    ul {
+      padding: 0;
+    }
+    ul li {
+      list-style: none;
+    }
+  </style>
+
+  <body>
+    <div id="app">
+      <div>
+        <label>
+          Загальна кількість прикладів
+          <input type="number" v-model.number="countExamples" />
+        </label>
+        <button type="button" :disabled="isValidField" @click="startSimulator">
+          Старт
+        </button>
+      </div>
+      <hr />
+      <div v-if="activeBlockExample" class="block">
+        <div>
+          <div>Питання {{currentExample}} /{{countExamples}}</div>
+          <span>{{num1}}</span>+<span>{{num2}}</span> =
+          <input type="number" v-model="userAnswer" />
+          <button
+            type="button"
+            :disabled="!isValidUserAnswerField"
+            @click="answer"
+          >
+            Відповісти
+          </button>
+        </div>
+      </div>
+
+      <template v-if="activeBlockResults">
+        <h2>Результат</h2>
+        <div class="results">
+          <div>
+            <h3>Правильно</h3>
+            <ul>
+              <li v-for="(item,index) in correctResults" :key="index">
+                {{item.result}}
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3>Неправильно</h3>
+            <ul>
+              <li v-for="(item,index) in incorrectResult" :key="index">
+                {{item.result}}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </template>
+    </div>
+    <script>
+      // Тренажер додавання. Вводимо загальну кількість прикладів і натискаємо на кнопку «Старт». Після запуску (натисканні на кнопку «Старт») кожні 10 секунд (10 секунд між завданнями) користувачу задають випадковий приклад з додавання двох цифр і робиться перевірка. Формується список  тих, які він відповів правильно, і які він відповів неправильно. Загальна кількість прикладів вводиться.
+      const { createApp } = Vue;
+      const app = createApp({
+        data() {
+          return {
+            countExamples: null,
+            currentExample: 1,
+            activeBlockExample: false,
+            activeBlockResults: false,
+            startSimulatorStatus: false,
+            userAnswer: null,
+            num1: 0,
+            num2: 0,
+            sum: null,
+            correctResults: [],
+            incorrectResult: [],
+          };
+        },
+        methods: {
+          getRandomNumber() {
+            return Math.floor(Math.random() * 10) + 1;
+          },
+          getValues() {
+            this.num1 = this.getRandomNumber();
+            this.num2 = this.getRandomNumber();
+            this.userAnswer = "";
+          },
+          startSimulator() {
+            this.getValues();
+            this.startSimulatorStatus = true;
+            setInterval(() => {
+              if (this.currentExample < this.countExamples) {
+                this.getValues();
+                this.currentExample++;
+              } else {
+                this.activeBlockResults = true;
+              }
+            }, 5000);
+
+            this.activeBlockExample = true;
+          },
+          answer() {
+            let correctAnswer = this.num1 + this.num2;
+            if (correctAnswer === this.userAnswer) {
+              this.correctResults.push({
+                result: `${this.num1} + ${this.num2} = ${this.userAnswer}`,
+              });
+            } else {
+              this.incorrectResult.push({
+                result: `${this.num1} + ${this.num2} = ${this.userAnswer} Правильна відповідь — ${correctAnswer}`,
+              });
+            }
+            this.userAnswer = "";
+          },
+          showResult() {
+            this.activeBlockResults = true;
+          },
+        },
+        computed: {
+          isValidField() {
+            return (
+              this.countExamples === null ||
+              this.countExamples <= 0 ||
+              this.startSimulatorStatus
+            );
+          },
+          isValidUserAnswerField() {
+            return (
+              this.userAnswer !== "" &&
+              !isNaN(this.userAnswer) &&
+              this.userAnswer >= 0
+            );
+          },
+        },
+      });
+      app.mount("#app");
+    </script>
+  </body>
+</html>
